@@ -13,10 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 
+library(tidyverse)
 library(tidytext)
 library(tm)
 library(e1071)
-library(odbc)
+# library(odbc)
 
 
 ```

@@ -1,0 +1,71 @@
+---
+title: "approx01"
+format: pdf
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+
+
+the_function <- function(it) it * it
+the_functions_derivative <- function(it) 2 * it
+
+get_low <- function(target, low, high) {
+  
+  llow <- c(low, the_function(low))
+  hhigh <- c(high, the_function(high) )
+  b0 <- llow[2]
+  e0 <- hhigh[2]
+  t0 <- (target - b0)/(e0 - b0)
+  result <- low + t0*(high-low)
+  result
+  
+}
+
+get_high <- function(target, low, high ) {
+  
+  result <- ( target + the_function(low) ) / the_functions_derivative(low)
+  result
+
+}
+
+get_next <- function( target, low, high) {
+  low0=get_low(target, low, high)
+  high0=get_high(target, low, high)
+  delta0=high0-low0
+  meas0=floor(1/delta0)
+  
+  c( target=target, 
+     low=low0,
+     high=high0,
+     delta=delta0,
+     meas=meas0
+     )
+
+}
+
+
+x0 <- get_next(2, 1, 2)
+x0 <- get_next(x0[1], x0[2], x0[3] )
+get_next(x0[1], x0[2], x0[3] )
+
+
+
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

@@ -1,0 +1,27 @@
+D := "mybook.ddb"
+
+
+test:
+	echo {{D}}
+	duckdb {{D}} "SELECT 93 as thelema"
+
+ddb:
+	echo duckdb xxx.ddb "CREATE TABLE mybook AS FROM read_csv('', ignore_errors=true);"
+	echo duckdb xxx.ddb "ALTER TABLE your_table_name RENAME COLUMN old_column_name TO new_column_name;"
+	echo duckdb {{D}} "CREATE OR REPLACE VIEW V0 AS SELECT fullpath, parse_dirpath(fullpath) as dir, parse_filename(fullpath) as filename from mybook;"
+	echo duckdb {{D}} "CREATE OR REPLACE VIEW V1 AS SELECT fullpath,  dir, filename, list_reverse( string_split(filename, '.'))[1]  as ext  from V0;"
+	duckdb {{D}} "CREATE OR REPLACE VIEW EXT0 AS SELECT ext, count(*) as n from V1 group by ext ORDER BY n DESC;"
+
+desc:
+	duckdb {{D}} "SELECT * from V1 USING SAMPLE 19 ROWS;"
+
+xx:
+	duckdb {{D}} "SELECT   SUBSTRING(filename FROM '^(.*\.)') AS file_name,   SUBSTRING(filename FROM '(\..*)$') AS file_extension  FROM V0 LIMIT 6;"
+
+ext:
+	duckdb {{D}} "SELECT * FROM EXT0 WHERE n > 999";
+
+pdf:
+	duckdb {{D}} "CREATE OR REPLACE VIEW PDF AS SELECT filename, count(*) as n FROM V1 WHERE ext='pdf' GROUP BY filename ORDER BY n DESC;"
+	duckdb {{D}} "COPY (FROM PDF) TO 'pdf.csv'";
+	
